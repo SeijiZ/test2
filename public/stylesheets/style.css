@@ -1,0 +1,11 @@
+*{
+	border:solid 2px;
+}
+html body{
+  height:100%;
+  margin:0;
+}
+.angular-google-map-container{
+	height: 400px;
+	width: 600px;
+}

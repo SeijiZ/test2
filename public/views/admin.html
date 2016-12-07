@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="adminApp">
+<head>
+	<meta charset="UTF-8">
+	<title>admin page</title>
+	<link rel="stylesheet" href="stylesheets/admin.css">
+</head>
+<body  ng-controller="adCtrl">
+	<div>rows to display:
+		<input type="number" step="1" min="0" min="0" max="5" ng-model="rowLimit" >
+	</div>
+	<table>
+		<thead>
+			<th ng-click="sortData('_id')">ID <div ng-class="getSortClass('_id')"></div></th>
+			<th ng-click="sortData('lat')">Lat<div ng-class="getSortClass('lat')"></div></th>
+			<th ng-click="sortData('lng')">Lng<div ng-class="getSortClass('lng')"></div></th>
+			<th ng-click="sortData('style')">Style<div ng-class="getSortClass('style')"></div></th>
+		</thead>
+		<tbody>
+			<tr ng-repeat="toilet in toilets |orderBy: sortColumn : reverseSort| limitTo: rowLimit">
+				<td>{{toilet._id | number}}</td>
+				<td>{{toilet.lat}}</td>
+				<td>{{toilet.lng}}</td>
+				<td>{{toilet.style}}</td>
+			</tr>
+		</tbody>
+	</table>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    <script src="javascripts/admin.js"></script>
+</body>
+</html>

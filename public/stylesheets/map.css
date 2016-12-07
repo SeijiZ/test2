@@ -1,0 +1,11 @@
+*{
+	border:solid 1px;
+}
+html body{
+  height:100%;
+  margin:0;
+}
+#map_canvas{
+	height: 400px;
+	width: 100%;
+}
