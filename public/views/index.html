@@ -25,9 +25,25 @@
 		<dib>{{results}}</dib>
 	</div>
 	<!--test2-->
-	<div class="icon_button">
-		<img src="images/icon_search.png" alt="icon_search">
-		<img src="images/icon_plus.png" alt="icon_plus">
+	<div ng-controller="ModalWindows">
+
+	<script type="text/ng-template" id="searchModal.html">
+<div class="modal-header">
+	<h1>modal window</h1>
+	</div>
+<div class="modal-body">
+	<input type="checkbox" value="japanese">
+	<input type="checkbox" value="western">
+	</div>
+<div class="modal-hooter">
+	<button type="button" ng-click="cancel()">close</button>
+	</div>
+	</script>
+
+		<div class="icon_button">
+			<img ng-click="open()" class="btn-default" src="images/icon_search.png" alt="icon_search">
+			<img src="images/icon_plus.png" alt="icon_plus">
+		</div>
 	</div>
 
     <!-- Google Map API キーが必要-->
