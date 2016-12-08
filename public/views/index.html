@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>AngularJS</title>
 	<link rel="stylesheet" href="./bower_components/angular-bootstrap/ui-bootstrap-csp.css">
+	<link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="stylesheets/map.css" />
 
 </head>
@@ -36,13 +37,13 @@
 	<input type="checkbox" value="western">
 	</div>
 <div class="modal-hooter">
-	<button type="button" ng-click="cancel()">close</button>
+	<button type="button" class="btn btn-primary" ng-click="cancel()">close</button>
 	</div>
 	</script>
 
-		<div class="icon_button">
-			<img ng-click="open()" class="btn-default" src="images/icon_search.png" alt="icon_search">
-			<img src="images/icon_plus.png" alt="icon_plus">
+		<div>
+			<img ng-click="open()" class=".icon_button" src="images/icon_search.png" alt="icon_search">
+			<img src="images/icon_plus.png" class=".icon_button" alt="icon_plus">
 		</div>
 	</div>
 

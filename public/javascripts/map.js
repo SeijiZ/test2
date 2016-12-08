@@ -42,6 +42,7 @@ app.controller('myCtrl', function($scope,$window,$http) {
 	}
 });
 
+//open search modal window ===========================================
 app.controller('ModalWindows', function($scope, $uibModal){
 	$scope.open = function(size){
 		var modalInstance = $uibModal.open({
@@ -52,6 +53,7 @@ app.controller('ModalWindows', function($scope, $uibModal){
 	}
 });
 
+//in the search modal window ===========================================
 app.controller('modalInsatnceCtrl', function($scope,$uibModalInstance){
 	$scope.cancel = function(){
 		$uibModalInstance.dismiss("cancel");

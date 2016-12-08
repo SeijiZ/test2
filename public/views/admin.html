@@ -3,29 +3,43 @@
 <head>
 	<meta charset="UTF-8">
 	<title>admin page</title>
+	<link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.css">
 	<link rel="stylesheet" href="stylesheets/admin.css">
 </head>
 <body  ng-controller="adCtrl">
 	<div>rows to display:
-		<input type="number" step="1" min="0" min="0" max="5" ng-model="rowLimit" >
+		<input type="number" step="1" min="0" max="10" ng-model="rowLimit" >
 	</div>
+
 	<table>
 		<thead>
-			<th ng-click="sortData('_id')">ID <div ng-class="getSortClass('_id')"></div></th>
+			<th ng-click="sortData('name')">Name<div ng-class="getSortClass('name')"></div></th>
 			<th ng-click="sortData('lat')">Lat<div ng-class="getSortClass('lat')"></div></th>
 			<th ng-click="sortData('lng')">Lng<div ng-class="getSortClass('lng')"></div></th>
 			<th ng-click="sortData('style')">Style<div ng-class="getSortClass('style')"></div></th>
 		</thead>
 		<tbody>
-			<tr ng-repeat="toilet in toilets |orderBy: sortColumn : reverseSort| limitTo: rowLimit">
-				<td>{{toilet._id | number}}</td>
-				<td>{{toilet.lat}}</td>
-				<td>{{toilet.lng}}</td>
-				<td>{{toilet.style}}</td>
+			<tr ng-repeat="item in items |orderBy: sortColumn : reverseSort| limitTo: rowLimit">
+				<td><input type="text" ng-model="item.name"></td>
+				<td><input type="text" ng-model="item.lat"></td>
+				<td><input type="text" ng-model="item.lng"></td>
+				<td><input type="text" ng-model="item.style"></td>
+				<td>
+					<button type="button" class="btn btn-warning" ng-click="update($index)">Update</button>
+					<button type="button" class="btn btn-danger" ng-click="delete($index)">Delete</button>
+				</td>
+			</tr>
+			<tr>
+				<td><input type="text" ng-model="newName"></td>
+				<td><input type="text" ng-model="newLat"></td>
+				<td><input type="text" ng-model="newLng"></td>
+				<td><input type="text" ng-model="newStyle"></td>
+				<td><button type="button" class="btn btn-info" ng-click="add()" ng-disabled="!newName">Add</button></td>
 			</tr>
 		</tbody>
 	</table>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+
+    <script src="./bower_components/angular/angular.js"></script>
     <script src="javascripts/admin.js"></script>
 </body>
 </html>
