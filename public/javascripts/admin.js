@@ -80,11 +80,15 @@ adapp.controller('adCtrl', function($scope,$http){
 		console.log($scope.items[index]._id);
 		$http({
 			method: 'DELETE',
-			url: '/admin/delete',
-			data: {_id: $scope.items[index]._id}
+			url: '/admin/delete/id:',
+			params: {_id: $scope.items[index]._id}
+		}).success(function(data, status, headers, config){
+			console.log(status);
+			console.log(data);
+			$scope.items.splice(index,1);
+		}).error(function(data, status, headers, config){
+			console.log(status);
 		})
-		console.log(data);
-		$scope.items.splice(index,1);
 	}
 });
 
