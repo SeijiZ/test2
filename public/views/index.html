@@ -9,18 +9,18 @@
 
 </head>
 <body ng-controller="myCtrl">
-	<div>{{lat}}</div>
 	<h1>{{1+1}}</h1>
 	<div id="map_canvas"></div>
 	<!--test1-->
 	<div class="container">
-		<button class="btn btn-primary" ng-click="doSearch()">API発行</button>
+		<button class="btn btn-primary" ng-click="doSearch()">Search all</button>
 		<br>
 		<br>
 		<table class="table">
 			<tr ng-repeat="result in results">
 				<td>{{result.name}}</td>
-				<td>{{result.score}}</td>
+				<td>{{result.lat}}</td>
+				<td>{{result.lng}}</td>
 			</tr>
 		</table>
 		<dib>{{results}}</dib>

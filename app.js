@@ -88,7 +88,7 @@ adminRouter.put('/update', function(req,res){
 	});
 });
 
-adminRouter.delete('/delete/id:', function(req,res){
+adminRouter.delete('/delete/', function(req,res){
 	console.log(req.query._id);
 	items.remove({_id: new ObjectID(req.query._id)}, function(err, r){
 		if(err){
