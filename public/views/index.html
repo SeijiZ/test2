@@ -8,8 +8,7 @@
     <link rel="stylesheet" href="stylesheets/map.css" />
 
 </head>
-<body ng-controller="myCtrl">
-	<div>{{lat}}</div>
+<body ng-controller="mainController">
 	<h1>{{1+1}}</h1>
 	<div id="map_canvas"></div>
 	<!--test1-->
@@ -20,10 +19,10 @@
 		<table class="table">
 			<tr ng-repeat="result in results">
 				<td>{{result.name}}</td>
-				<td>{{result.score}}</td>
+				<td>{{result.lat}}</td>
+				<td>{{result.lng}}</td>
 			</tr>
 		</table>
-		<dib>{{results}}</dib>
 	</div>
 	<!--test2-->
 	<div ng-controller="ModalWindows">
