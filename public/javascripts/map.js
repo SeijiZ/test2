@@ -1,6 +1,6 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 
-app.controller('mainController', function($scope,$window,$http,connectionService, Map) {
+app.controller('mainController', function($scope, $window, $http, connectionService, Map, GeolocationApi) {
 //initlize
 	var lat = 50;
 	var lng = -50;
@@ -24,7 +24,7 @@ app.controller('mainController', function($scope,$window,$http,connectionService
 					$scope.map,
 					false
 				);
-				Map.addInfoWindow(new google.maps.LatLng($scope.results[0].lat, $scope.results[0].lng));
+				console.log(GeolocationApi.getPosition);
 			})
 
 	});
@@ -131,6 +131,66 @@ app.factory('Map', function(){
 	};
 });
 
+app.factory('GeolocationApi', function(){
+	return{
+		getPosition:function(){
+			function successFunc(position){
+				var lat = position.coords.latitude;
+				var lng = position.coords.longitude;
+				var latlng = {lat:lat, lng:lng};
+				return latlng; 
+			}
+			navigator.geolocation.getCurrentPosition(successFunc,errorFunc);
+		},
+		watch:function(){
+			var syncerWatchPosition = {
+				count: 0,
+				lastTime: 0
+			};
+
+			function successFunc(position){
+				var nowTime = ~~( new Date() / 1000 );
+				if((syncerWatchPosition.lastTime + 3) > nowTime){
+					var latlng = {lat:position.coords.latitudet, lng:position.coords.longitude};
+					return latlng;
+				}
+				syncerWatchPosition.lastTime = nowTime;
+			}
+
+			function errorFunc(error){
+				var errorMessage = {
+					0: "error happened",
+					1: "failed to access position due to owner action",
+					2: "failed to access position due to signal",
+					3: "timeout error"
+				};
+				console.log(errorMessage);
+			}
+			var optionObj={
+				"enableHighAccuracy": true,
+				"timeout": 8000,
+				"maximumAge": 5000
+			};
+
+			var watchID = navigator.geolocation.watchPosition(successFunc, errorFunc, optionObj);
+
+		}
+	};
+});
+//navigator.geolocation.watchPosition(successFunc , errorFunc , optionObj);
+//
+//function successFunc (position){
+//++syncerWatchPosition.count;
+//var nowTime = ~~(new Date()/1000)
+//if (syncerWatchPosition.lasttime + 3) > nowTime){
+//return false;
+//}
+//syncerWatchPosition.lastTime = nowTime;
+//
+//var lat = position.coords.latitude;
+//var lng = position.coords.longitude;
+//
+//}
 
 //app.run(function($rootScope){
 //	$rootScope.endPoint = 'http://localhost:3000';
