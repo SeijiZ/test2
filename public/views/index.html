@@ -40,9 +40,27 @@
 	</div>
 	</script>
 
+	<script type="text/ng-template" id="postModal.html">
+<div class="modal-header">
+	<h1>modal window</h1>
+	</div>
+<div class="modal-body">
+<span>western</span>
+	<input type="checkbox" value="japanese">
+	<input type="checkbox" value="western">
+	</div>
+<div class="modal-hooter">
+	<button type="button" class="btn btn-primary" ng-click="cancel()">close</button>
+	</div>
+	</script>
+	
 		<div>
-			<img ng-click="open()" class=".icon_button" src="images/icon_search.png" alt="icon_search">
-			<img src="images/icon_plus.png" class=".icon_button" alt="icon_plus">
+			<span class="icon_container">
+			<img ng-click="openSearch()" src="images/icon_search.png" class=".icon_button"  alt="icon_search">
+			</span>
+			<span class="icon_container">
+			<img ng-click="openPost()" src="images/icon_plus.png" class=".icon_button" alt="icon_plus">
+			</span>
 		</div>
 	</div>
 

@@ -1,6 +1,6 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 
-app.controller('mainController', function($scope,$window,$http,connectionService, Map) {
+app.controller('mainController', function($scope,$window,$http,connectionService, Map, geolocationApi) {
 //initlize
 	var lat = 50;
 	var lng = -50;
@@ -25,6 +25,8 @@ app.controller('mainController', function($scope,$window,$http,connectionService
 					false
 				);
 				Map.addInfoWindow(new google.maps.LatLng($scope.results[0].lat, $scope.results[0].lng));
+				//geolocationApi.getPosition().then(function(res){console.log(res.coords.latitude)});
+				console.log(geolocationApi.watchPosition({enableHighAccuracy:true}));
 			})
 
 	});
@@ -63,10 +65,17 @@ app.controller('mainController', function($scope,$window,$http,connectionService
 
 //open search modal window ===========================================
 app.controller('ModalWindows', function($scope, $uibModal){
-	$scope.open = function(size){
+	$scope.openSearch = function(size){
 		var modalInstance = $uibModal.open({
 			size: size,
 			templateUrl: 'searchModal.html' ,
+			controller: "modalInsatnceCtrl"
+		});
+	}
+	$scope.openPost = function(size){
+		var modalInstance = $uibModal.open({
+			size: size,
+			templateUrl: 'postModal.html' ,
 			controller: "modalInsatnceCtrl"
 		});
 	}
@@ -132,6 +141,45 @@ app.factory('Map', function(){
 });
 
 
+app.service('geolocationApi', function($rootScope, $q){
+	return {
+		getPosition: function(){
+			var defer = $q.defer();
+			navigator.geolocation.getCurrentPosition(
+				function(position){
+					$rootScope.$apply(function(){
+						position.coords = position.coords;
+						defer.resolve(position);
+					});
+				}
+			);
+			return defer.promise;
+		},
+		sample:function(){
+			var a = {lat:49, lng:34};
+			return a;
+		},
+		watchPosition: function(options){
+			var watchId = navigator.geolocation.watchPosition(
+				function(position){
+					$rootScope.$apply(function(){
+						position.coords = position.coords;
+					});
+				},
+				function(error){
+					$rootScope.$apply(function(){
+						position.error = error;
+					});
+				},
+				options
+				//example of options
+				//timeout: 60000,
+				//maximumAge: 250,
+				//enableHighAccuracy: true
+			);
+		}
+	};
+});
 //app.run(function($rootScope){
 //	$rootScope.endPoint = 'http://localhost:3000';
 //});
