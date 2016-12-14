@@ -9,20 +9,20 @@ app.run(function($rootScope, ngGeolocation,Map){
 		}
 		$rootScope.map = new google.maps.Map(document.getElementById('map_canvas'), options);
 		console.log(res);
-		ngGeolocation.watchPosition({timeout: 60000,maximumAge: 250, enableHighAccuracy: true});
+		ngGeolocation.watchPosition({timeout: 60000, maximumAge: 250, enableHighAccuracy: true});
 		$rootScope.myPosition = ngGeolocation.position
 		$rootScope.$watch('myPosition.coords', function(newValue, oldValue){
 			$rootScope.newPos = newValue;
 			$rootScope.oldPos = oldValue;
-			Map.addMarker(new google.maps.LatLng(newValue.latitude, newValue.longitude),$rootScope.map, true);
+			$rootScope.LatLng = new google.maps.LatLng(newValue.latitude, newValue.longitude);
+			Map.addMarker($rootScope.LatLng,$rootScope.map, false);
+			console.log($rootScope.newPos);
 		})
 	});
 });
 
-app.controller('mainController', function($scope,$window,$http,connectionService, Map) {
+app.controller('mainController', function($rootScope, $scope,$window,$http,connectionService, Map) {
 //initlize
-	var lat = 50;
-	var lng = -50;
 //	$window.navigator.geolocation.getCurrentPosition(function(pos){
 //		lat = pos.coords.latitude;
 //		lng = pos.coords.longitude;
@@ -61,6 +61,13 @@ app.controller('mainController', function($scope,$window,$http,connectionService
 //
 //	});
 //google map apiはここまで
+$scope.testa = function(){
+	var marker = Map.addMarker(new google.maps.LatLng(36, 140), $rootScope.map, false);
+	var infowindow = new google.maps.InfoWindow({content: "window success"});
+	google.maps.event.addListener(marker, 'click', function(){
+		infowindow.open($rootScope.map, marker);
+	});
+};
 
 	$scope.doSearch = function(){
 		connectionService.getAllItem('/test1')
@@ -112,10 +119,20 @@ app.controller('ModalWindows', function($scope, $uibModal){
 });
 
 //in the search modal window =========================================
-app.controller('modalInsatnceCtrl', function($scope,$uibModalInstance){
+app.controller('modalInsatnceCtrl', function($rootScope, $scope, $uibModalInstance, connectionService){
 	$scope.cancel = function(){
 		$uibModalInstance.dismiss("cancel");
 	}
+
+	$scope.doSearch = function(){
+		connectionService.getAllItem('/test1')
+			.then(function(res){
+				//success
+				$rootScope.results = connectionService.items;
+				$scope.cancel();
+			})
+	}
+
 });
 
 //define services ====================================================
