@@ -1,33 +1,65 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 
-app.controller('mainController', function($scope, $window, $http, connectionService, Map, GeolocationApi) {
+app.run(function($rootScope, ngGeolocation,Map){
+	ngGeolocation.getCurrentPosition()
+	.then(function(res){
+		var options = {
+			zoom: 9,
+			center: new google.maps.LatLng(res.coords.latitude, res.coords.longitude)
+		}
+		$rootScope.map = new google.maps.Map(document.getElementById('map_canvas'), options);
+		console.log(res);
+		ngGeolocation.watchPosition({timeout: 60000,maximumAge: 250, enableHighAccuracy: true});
+		$rootScope.myPosition = ngGeolocation.position
+		$rootScope.$watch('myPosition.coords', function(newValue, oldValue){
+			$rootScope.newPos = newValue;
+			$rootScope.oldPos = oldValue;
+			Map.addMarker(new google.maps.LatLng(newValue.latitude, newValue.longitude),$rootScope.map, true);
+		})
+	});
+});
+
+app.controller('mainController', function($scope,$window,$http,connectionService, Map) {
 //initlize
 	var lat = 50;
 	var lng = -50;
-	$window.navigator.geolocation.getCurrentPosition(function(position){
-		lat = position.coords.latitude;
-		lng = position.coords.longitude;
-		var options = {
-			zoom: 9,
-			center: new google.maps.LatLng(lat, lng)
-		}
-		$scope.map = new google.maps.Map(document.getElementById('map_canvas'), options);
-		Map.addMarker(options.center, $scope.map);
-
-		connectionService.getAllItem('/test1')
-			.then(function(res){
-				//success
-				$scope.results = connectionService.items;
-				console.log($scope.results[0]);
-				Map.addMarker(
-					new google.maps.LatLng($scope.results[0].lat, $scope.results[0].lng),
-					$scope.map,
-					false
-				);
-				console.log(GeolocationApi.getPosition);
-			})
-
-	});
+//	$window.navigator.geolocation.getCurrentPosition(function(pos){
+//		lat = pos.coords.latitude;
+//		lng = pos.coords.longitude;
+//		console.log(lat);
+//		var options = {
+//			zoom: 9,
+//			center: new google.maps.LatLng(lat, lng)
+//		}
+//		$scope.map = new google.maps.Map(document.getElementById('map_canvas'), options);
+//		Map.addMarker(options.center, $scope.map);
+//
+//		connectionService.getAllItem('/test1')
+//			.then(function(res){
+//				//success
+//				$scope.results = connectionService.items;
+//				$scope.marker = Map.addMarker(
+//					new google.maps.LatLng($scope.results[0].lat, $scope.results[0].lng),
+//					$scope.map,
+//					false
+//				);
+//				var infowindow = new google.maps.InfoWindow({content:'sample'});
+//				google.maps.event.addListener('click', function(){
+//					infowindow.open($scope.map, $scope.marker);
+//				});
+//				//geolocationApi.getPosition().then(function(cpos){console.log(cpos.coords.latitude)});
+//			//	geolocationApi.watchPosition({
+//			//		timeout: 10000,
+//			//		enableHighAccuracy: true
+//			//	});
+//			//	$scope.myPosition = geolocationApi.position;
+//			//	$scope.$watch('myPosition', function(newValue, oldValue){
+//			//		console.log(newValue);
+//			//		console.log(oldValue);
+//			//	});
+//			})
+//
+//	});
 //google map apiはここまで
 
 	$scope.doSearch = function(){
@@ -63,10 +95,17 @@ app.controller('mainController', function($scope, $window, $http, connectionServ
 
 //open search modal window ===========================================
 app.controller('ModalWindows', function($scope, $uibModal){
-	$scope.open = function(size){
+	$scope.openSearch = function(size){
 		var modalInstance = $uibModal.open({
 			size: size,
 			templateUrl: 'searchModal.html' ,
+			controller: "modalInsatnceCtrl"
+		});
+	}
+	$scope.openPost = function(size){
+		var modalInstance = $uibModal.open({
+			size: size,
+			templateUrl: 'postModal.html' ,
 			controller: "modalInsatnceCtrl"
 		});
 	}
@@ -80,117 +119,7 @@ app.controller('modalInsatnceCtrl', function($scope,$uibModalInstance){
 });
 
 //define services ====================================================
-//service to connect server ==========================================
-app.factory('connectionService', function($http, $q){
-	var connect = this;
-	connect.items = {};
-	var defer = $q.defer();
 
-	connect.getAllItem =function(url){
-		$http({
-			method: 'GET',
-			url: url
-		})
-		.success(function(data, status, headers, config){
-			connect.items = data
-			defer.resolve(data);
-		})
-		.error(function(data, status, headers, config){
-			defer.reject(err);
-		})
-		return defer.promise;
-	}
-	return connect;
-});
-
-//service to use google map api ======================================
-app.factory('Map', function(){
-//	var map = this;
-//	map.addMarker = function(position, map){
-//		new google.maps.Marker({
-//			position: position,
-//			map: map,
-//		})
-//	}
-//	return map;
-	return{
-		addMarker: function(position, map, bool){
-			new google.maps.Marker({
-				position: position,
-				map: map,
-				draggable: bool
-			})
-		},
-		
-		addInfoWindow: function(position){
-			new google.maps.InfoWindow({
-				content: 'sample',
-				position: position
-			})
-		}
-	};
-});
-
-app.factory('GeolocationApi', function(){
-	return{
-		getPosition:function(){
-			function successFunc(position){
-				var lat = position.coords.latitude;
-				var lng = position.coords.longitude;
-				var latlng = {lat:lat, lng:lng};
-				return latlng; 
-			}
-			navigator.geolocation.getCurrentPosition(successFunc,errorFunc);
-		},
-		watch:function(){
-			var syncerWatchPosition = {
-				count: 0,
-				lastTime: 0
-			};
-
-			function successFunc(position){
-				var nowTime = ~~( new Date() / 1000 );
-				if((syncerWatchPosition.lastTime + 3) > nowTime){
-					var latlng = {lat:position.coords.latitudet, lng:position.coords.longitude};
-					return latlng;
-				}
-				syncerWatchPosition.lastTime = nowTime;
-			}
-
-			function errorFunc(error){
-				var errorMessage = {
-					0: "error happened",
-					1: "failed to access position due to owner action",
-					2: "failed to access position due to signal",
-					3: "timeout error"
-				};
-				console.log(errorMessage);
-			}
-			var optionObj={
-				"enableHighAccuracy": true,
-				"timeout": 8000,
-				"maximumAge": 5000
-			};
-
-			var watchID = navigator.geolocation.watchPosition(successFunc, errorFunc, optionObj);
-
-		}
-	};
-});
-//navigator.geolocation.watchPosition(successFunc , errorFunc , optionObj);
-//
-//function successFunc (position){
-//++syncerWatchPosition.count;
-//var nowTime = ~~(new Date()/1000)
-//if (syncerWatchPosition.lasttime + 3) > nowTime){
-//return false;
-//}
-//syncerWatchPosition.lastTime = nowTime;
-//
-//var lat = position.coords.latitude;
-//var lng = position.coords.longitude;
-//
-//}
 
 //app.run(function($rootScope){
 //	$rootScope.endPoint = 'http://localhost:3000';
