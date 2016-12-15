@@ -1,7 +1,7 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 
 //intialize after loading ============================================
-app.run(function($rootScope, ngGeolocation,Map){
+app.run(function($rootScope, ngGeolocation,googleMapApi){
 	ngGeolocation.getCurrentPosition()
 	.then(function(res){
 		var options = {
@@ -12,17 +12,56 @@ app.run(function($rootScope, ngGeolocation,Map){
 		console.log(res);
 		ngGeolocation.watchPosition({timeout: 60000, maximumAge: 0, enableHighAccuracy: true});
 		$rootScope.myPosition = ngGeolocation.position
+		console.log($rootScope.myPosition);
 		var count = 0;
+		var markers = [];
 		$rootScope.$watch('myPosition.coords', function(newValue, oldValue){
-			console.log(count);
-			count = count + 1;
 			$rootScope.newPos = newValue;
 			$rootScope.oldPos = oldValue;
-			$rootScope.LatLng = new google.maps.LatLng(newValue.latitude, newValue.longitude);
-			Map.addMarker($rootScope.LatLng,$rootScope.map, false);
+			$rootScope.LatLng = new google.maps.LatLng($rootScope.newPos.latitude, $rootScope.newPos.longitude);
+			console.log($rootScope.newPos);
+			markers[count] = new google.maps.Marker({position: $rootScope.LatLng});
+			markers[count].setMap($rootScope.map);
+			count = count +1;
+			console.log(count + "times");
+			if(count > 1){
+				markers[count - 1].setMap(null);
+			}
 		})
 	});
 });
+
+
+//intialize after loading ============================================
+//app.run(function($rootScope, ngGeolocation,Map){
+//	ngGeolocation.watchPosition({timeout: 60000, maximumAge: 250, enableHighAccuracy: true});
+//	$rootScope.myPosition = ngGeolocation.position
+//	console.log($rootScope.myPosition);
+//	var count = 0;
+//	var markers = [];
+//	$rootScope.$watch('myPosition.coords', function(newValue, oldValue){
+//		$rootScope.newPos = newValue;
+//		$rootScope.oldPos = oldValue;
+//		if(count ==0){
+//			var options = {
+//				zoom: 13,
+//				center: new google.maps.LatLng(
+//					$rootScope.newPos.latitude,
+//					$rootScope.newPos.longitude)
+//			}
+//				$rootScope.map = new google.maps.Map(document.getElementById('map_canvas'), options);
+//		}
+//			$rootScope.LatLng = new google.maps.LatLng($rootScope.newPos.latitude, $rootScope.newPos.longitude);
+//			console.log($rootScope.newPos);
+//			markers[count] = new google.maps.Marker({position: $rootScope.LatLng});
+//		markers[count].setMap($rootScope.map);
+//		count = count +1;
+//		console.log(count + "times");
+//		if(count > 1){
+//			markers[count - 1].setMap(null);
+//		}
+//	})
+//});
 
 //main controller ====================================================
 app.controller('mainController', function(
@@ -32,7 +71,7 @@ app.controller('mainController', function(
 	$http,
 	$uibModal,
 	connectionService,
-	Map) {
+	googleMapApi) {
 
 
 //infowindow sample===========================================
@@ -40,7 +79,7 @@ app.controller('mainController', function(
 
 			function asyncMarker(lat,lng){
 				var defer = $q.defer();
-				var marker = Map.addMarker(
+				var marker = googleMapApi.addMarker(
 					new google.maps.LatLng(lat, lng),
 					$rootScope.map,
 					false);
@@ -91,7 +130,7 @@ app.controller('mainController', function(
 			//	})
 		}
 
-//modal window controller ============================================
+//initiate modal window ==============================================
 		$scope.openSearch = function(size){
 			var modalInstance = $uibModal.open({
 				size: size,
@@ -113,7 +152,12 @@ app.controller('mainController', function(
 
 
 //in the search modal window =========================================
-app.controller('modalInsatnceCtrl', function($rootScope, $scope, $uibModalInstance, connectionService){
+app.controller('modalInsatnceCtrl', function(
+	$rootScope,
+	$scope,
+	$uibModalInstance,
+	connectionService,
+	googleMapApi){
 
 	$scope.cancel = function(){
 		$uibModalInstance.dismiss("cancel");
@@ -123,7 +167,25 @@ app.controller('modalInsatnceCtrl', function($rootScope, $scope, $uibModalInstan
 		connectionService.getAllItem('/test1')
 			.then(function(res){
 				//success
-				$rootScope.results = connectionService.items;
+				$rootScope.items = connectionService.items;
+				console.log($rootScope.items);
+				var markers = [];
+				var infoWindow = [];
+				for(var i = 0; i < $rootScope.items.length; i++){
+					console.log(i);
+					console.log($rootScope.items[i]);
+					markers[i] = googleMapApi.addMarker(
+						new google.maps.LatLng($rootScope.items[i].lat, $rootScope.items[i].lng),
+						$rootScope.map,
+						false
+					);
+					infoWindow[i] = new google.maps.InfoWindow({content: "<h1>" + $scope.items[i].style + "</h1>"});
+					google.maps.event.addListener(markers[i], 'click', function(){
+						console.log(i);
+						infoWindow[i].open($rootScope.map, markers[i]);
+					});
+				}
+					console.log($rootScope.items[0]);
 				$scope.cancel();
 			})
 	}

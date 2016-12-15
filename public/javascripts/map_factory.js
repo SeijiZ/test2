@@ -18,12 +18,27 @@ app.factory('connectionService', function($http, $q){
 		})
 		return defer.promise;
 	}
+
+	connect.createItem = function(url, data){
+		$http({
+			method: 'POST',
+			url: url,
+			data: data
+		})
+		.success(function(data, status, headers, config){
+			defer.resolve(data);
+		})
+		.error(function(data, status, headers, config){
+			defer.reject(err);
+		})
+		return defer.promise;
+	}
 	return connect;
 });
 
 
 //service to use google map api ======================================
-app.factory('Map', function(){
+app.factory('googleMapApi', function(){
 //	var map = this;
 //	map.addMarker = function(position, map){
 //		new google.maps.Marker({
