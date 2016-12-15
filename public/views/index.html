@@ -17,6 +17,8 @@
 	<div class="container">
 		<button class="btn btn-primary" ng-click="testa()">test</button>
 		<br>
+		<input type="button" ng-click="confirmBtn()">
+		<br>
 		<br>
 		<table class="table">
 			<tr ng-repeat="result in results">
@@ -27,7 +29,6 @@
 		</table>
 	</div>
 	<!--test2-->
-	<div ng-controller="ModalWindows">
 
 	<script type="text/ng-template" id="searchModal.html">
 <div class="modal-header">
@@ -54,7 +55,8 @@
 	<input type="checkbox" value="western">
 	</div>
 <div class="modal-hooter">
-	<button type="button" class="btn btn-primary" ng-click="cancel()">close</button>
+	<button type="button" class="btn btn-primary" ng-click="post_modal_button()">post</button>
+	<button type="button" class="btn btn-default" ng-click="cancel()">close</button>
 	</div>
 	</script>
 	
@@ -66,7 +68,13 @@
 			<img ng-click="openPost()" src="images/icon_plus.png" class=".icon_button" alt="icon_plus">
 			</span>
 		</div>
-	</div>
+
+<nav ng-show="showbtn" class="navbar navbar-inverse navbar-fixed-bottom">
+    <div class="container-fluid">
+      <button type = "button" class="btn btn-info btn-lg" ng-click="post_confirmed">Post</button>
+      <button type = "button" class="btn btn-info btn-lg" ng-click="showbtn=false" >cancel</button>
+    </div>
+  </nav> 
 
     <!-- Google Map API キーが必要-->
 	<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQs-KCiEp2puGEGruZ-ozBWu1btLUwsq8"></script>

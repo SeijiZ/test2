@@ -21,6 +21,7 @@ app.factory('connectionService', function($http, $q){
 	return connect;
 });
 
+
 //service to use google map api ======================================
 app.factory('Map', function(){
 //	var map = this;
@@ -33,7 +34,7 @@ app.factory('Map', function(){
 //	return map;
 	return{
 		addMarker: function(position, map, bool){
-			new google.maps.Marker({
+			return new google.maps.Marker({
 				position: position,
 				map: map,
 				draggable: bool
