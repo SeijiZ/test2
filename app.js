@@ -43,7 +43,8 @@ app.get('/', function(req,res){
 	res.sendFile(path.join(__dirname+'/public/views/index.html'));
 });
 
-app.get("/test1", function(req, res){
+app.get("/search", function(req, res){
+	console.log(req.query);
 	items.find().toArray(function(err, items){
 		res.json(items);
 	});

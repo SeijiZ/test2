@@ -110,26 +110,6 @@ app.controller('mainController', function(
 
 		};
 
-		$scope.doSearch = function(){
-			console.log("dosearch");
-
-			//		connectionService.getAllItem('/test1')
-			//			.then(function(res){
-			//				//success
-			//				$scope.results = connectionService.items;
-			//			})
-			//	$http({
-			//		method: "GET",
-			//		url: '/test1'
-			//	}).success(function(data, status, headers, config){
-			//		$scope.results = data;
-			//		console.log(status);
-			//		console.log(data);
-			//	}).error(function(data, status, headers, config){
-			//		console.log(status);
-			//	})
-		}
-
 //initiate modal window ==============================================
 		$scope.openSearch = function(size){
 			var modalInstance = $uibModal.open({
@@ -163,9 +143,16 @@ app.controller('modalInsatnceCtrl', function(
 		$uibModalInstance.dismiss("cancel");
 	}
 
-	$scope.doSearch = function(){
-		connectionService.getAllItem('/test1')
+//search button ======================================================
+	$scope.searchItems = function(){
+		var searchObj = {
+			range: $scope.searchRange,
+			style: $scope.searchItemStyle,
+			temperature: $scope.searchSeatTemperature
+		};
+		connectionService.getSearchedItems('/search', searchObj)
 			.then(function(res){
+				console.log(res);
 				//success
 				$rootScope.items = connectionService.items;
 				console.log($rootScope.items);

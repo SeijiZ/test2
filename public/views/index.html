@@ -10,8 +10,8 @@
 </head>
 <body ng-controller="mainController">
 	<h1>{{1+1}}</h1>
-	<h2>{{newPos.latitude}}</h2>
-	<h2>{{oldPos.latitude}}</h2>
+	<h2>緯度：{{newPos.latitude}} 経度:{{newPos.longitude}}</h2>
+	<h2>緯度：{{oldPos.latitude}} 経度:{{oldPos.longitude}}</h2>
 	<div id="map_canvas"></div>
 	<!--test1-->
 	<div class="container">
@@ -30,21 +30,63 @@
 	</div>
 	<!--test2-->
 
+	<!-- search modal window -->
 	<script type="text/ng-template" id="searchModal.html">
 <div class="modal-header">
-	<h1>modal window</h1>
-	</div>
+	<h1>Search</h1>
+</div>
 <div class="modal-body">
-	<input type="checkbox" value="japanese">
-	<input type="checkbox" value="western">
-	</div>
+
+<div>
+
+<h1>Search range</h1>
+
+<form>
+
+	<input type="radio" ng-model="searchRange" value="small"> small  <br/>
+	<input type="radio" ng-model="searchRange" value="mediam"> mediam <br/>
+	<input type="radio" ng-model="searchRange" value="large"> large  <br/>
+
+</form>
+</div>
+
+<div>
+<h1>toilet style</h1>
+
+<form>
+
+	<input type="radio" ng-model="searchItemStyle" value="Western"> Western   <br/>
+	<input type="radio" ng-model="searchItemStyle" value="Japanese"> Japanese <br/>
+
+</form>
+
+</div>
+
+<div>
+<h1>seat temperature</h1>
+
+<form>
+
+	<input type="radio" ng-model="searchSeatTemperature" value="warm"> warm  <br/>
+	<input type="radio" ng-model="searchSeatTemperature" value="cold"> cold  <br/>
+
+</form>
+</div>
+
+
+</div>
 <div class="modal-hooter">
-<span style="align: center;"></span>
-	<button type="button" class="btn btn-primary" ng-click="doSearch()">Search</button>
-	<button type="button" class="btn btn-default" ng-click="cancel()">close</button>
-	</div>
+	<span style="align: center;">
+
+		<button type="button" class="btn btn-primary" ng-click="searchItems()">Search</button>
+		<button type="button" class="btn btn-default" ng-click="cancel()">close</button>
+
+	</span>
+</div>
 	</script>
 
+
+	<!-- post modal window -->
 	<script type="text/ng-template" id="postModal.html">
 <div class="modal-header">
 	<h1>modal window</h1>

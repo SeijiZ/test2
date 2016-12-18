@@ -19,6 +19,22 @@ app.factory('connectionService', function($http, $q){
 		return defer.promise;
 	}
 
+	connect.getSearchedItems =function(url,obj){
+		$http({
+			method: 'GET',
+			url: url,
+			params:obj
+		})
+		.success(function(data, status, headers, config){
+			connect.items = data
+			defer.resolve(data);
+		})
+		.error(function(data, status, headers, config){
+			defer.reject(err);
+		})
+		return defer.promise;
+	}
+
 	connect.createItem = function(url, data){
 		$http({
 			method: 'POST',
