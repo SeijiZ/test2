@@ -1,13 +1,14 @@
-var express    = require('express');
-var bodyParser = require('body-parser');
-var logger     = require('morgan');
-var http       = require('http');
-var https      = require('https');
-var path       = require('path');
-var mongodb    = require('mongodb');
-var ObjectID   = mongodb.ObjectID;
+var express     = require('express');
+var bodyParser  = require('body-parser');
+var logger      = require('morgan');
+var http        = require('http');
+var https       = require('https');
+var path        = require('path');
+var mongodb     = require('mongodb');
+var ObjectID    = mongodb.ObjectID;
 
-var app        = express();
+var app         = express();
+var mainRouter  = express.Router();
 var adminRouter = express.Router();
 
 
@@ -17,7 +18,7 @@ var options = {
 	key:'',
 };
 
-//connect to mongodb =============================================================================
+//connect to mongodb =================================================
 mongodb.MongoClient.connect("mongodb://localhost:27017/testdb", function(err, db){
 	if(err){
 		console.log(err);
@@ -28,29 +29,37 @@ mongodb.MongoClient.connect("mongodb://localhost:27017/testdb", function(err, db
 	}
 });
 
-//configs =============================================================================
+//configs ============================================================
 app.use(express.static('public'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(logger('dev'));
 
+app.use('/', mainRouter);
 app.use('/admin', adminRouter);
 
 
-//index routing =============================================================================
-app.get('/', function(req,res){
+//index routing ======================================================
+mainRouter.get('/', function(req,res){
 	res.sendFile(path.join(__dirname+'/public/views/index.html'));
 });
 
-app.get("/search", function(req, res){
+mainRouter.get("/search", function(req, res){
 	console.log(req.query);
 	items.find().toArray(function(err, items){
 		res.json(items);
 	});
 });
 
-//admin routing ====================================================================================
+mainRouter.post('/post', function(req,res){
+	items.insertOne(req.body).then(function(){
+		res.send(req.body);
+	});
+	console.log(req.body);
+});
+
+//admin routing ======================================================
 adminRouter.get('/', function(req,res){
 	res.sendFile(path.join(__dirname+'/public/views/admin.html'));
 });
@@ -100,7 +109,7 @@ adminRouter.delete('/delete/', function(req,res){
 	});
 })
 
-//http,https config=========================================
+//http,https config===================================================
 http.createServer(app).listen(3000);
 https.createServer(options, app).listen(8888);
 

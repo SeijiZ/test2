@@ -9,11 +9,10 @@
 
 </head>
 <body ng-controller="mainController">
-	<h1>{{1+1}}</h1>
 	<h2>緯度：{{newPos.latitude}} 経度:{{newPos.longitude}}</h2>
-	<h2>緯度：{{oldPos.latitude}} 経度:{{oldPos.longitude}}</h2>
 	<div id="map_canvas"></div>
 	<!--test1-->
+	<!--
 	<div class="container">
 		<button class="btn btn-primary" ng-click="testa()">test</button>
 		<br>
@@ -28,78 +27,78 @@
 			</tr>
 		</table>
 	</div>
+	-->
 	<!--test2-->
 
 	<!-- search modal window -->
 	<script type="text/ng-template" id="searchModal.html">
-<div class="modal-header">
-	<h1>Search</h1>
-</div>
-<div class="modal-body">
-
-<div>
-
-<h1>Search range</h1>
-
-<form>
-
-	<input type="radio" ng-model="searchRange" value="small"> small  <br/>
-	<input type="radio" ng-model="searchRange" value="mediam"> mediam <br/>
-	<input type="radio" ng-model="searchRange" value="large"> large  <br/>
-
-</form>
-</div>
-
-<div>
-<h1>toilet style</h1>
-
-<form>
-
-	<input type="radio" ng-model="searchItemStyle" value="Western"> Western   <br/>
-	<input type="radio" ng-model="searchItemStyle" value="Japanese"> Japanese <br/>
-
-</form>
-
-</div>
-
-<div>
-<h1>seat temperature</h1>
-
-<form>
-
-	<input type="radio" ng-model="searchSeatTemperature" value="warm"> warm  <br/>
-	<input type="radio" ng-model="searchSeatTemperature" value="cold"> cold  <br/>
-
-</form>
-</div>
-
-
-</div>
-<div class="modal-hooter">
-	<span style="align: center;">
-
-		<button type="button" class="btn btn-primary" ng-click="searchItems()">Search</button>
-		<button type="button" class="btn btn-default" ng-click="cancel()">close</button>
-
-	</span>
-</div>
+		<div class="modal-header">
+			<h1>Search</h1>
+		</div>
+		<div class="modal-body">
+			<div>
+				<h1>Search range</h1>
+				<form>
+					<input type="radio" ng-model="searchRange" value="small"> small  <br/>
+					<input type="radio" ng-model="searchRange" value="mediam"> mediam <br/>
+					<input type="radio" ng-model="searchRange" value="large"> large  <br/>
+				</form>
+			</div>
+			<div>
+				<h1>toilet style</h1>
+				<form>
+					<input type="radio" ng-model="searchItemStyle" value="Western"> Western   <br/>
+					<input type="radio" ng-model="searchItemStyle" value="Japanese"> Japanese <br/>
+				</form>
+			</div>
+			<div>
+				<h1>seat temperature</h1>
+				<form>
+					<input type="radio" ng-model="searchSeatTemperature" value="warm"> warm  <br/>
+					<input type="radio" ng-model="searchSeatTemperature" value="cold"> cold  <br/>
+				</form>
+			</div>
+		</div>
+		<div class="modal-hooter">
+			<span style="align: center;">
+				<button type="button" class="btn btn-primary" ng-click="searchItems()">Search</button>
+				<button type="button" class="btn btn-default" ng-click="closeModalWindow()">close</button>
+			</span>
+		</div>
 	</script>
 
 
 	<!-- post modal window -->
 	<script type="text/ng-template" id="postModal.html">
-<div class="modal-header">
-	<h1>modal window</h1>
-	</div>
-<div class="modal-body">
-<span>western</span>
-	<input type="checkbox" value="japanese">
-	<input type="checkbox" value="western">
-	</div>
-<div class="modal-hooter">
-	<button type="button" class="btn btn-primary" ng-click="post_modal_button()">post</button>
-	<button type="button" class="btn btn-default" ng-click="cancel()">close</button>
-	</div>
+		<div class="modal-header">
+			<h1>modal window</h1>
+		</div>
+		<div class="modal-body">
+			<div>
+				<h1>toilet style</h1>
+				<form>
+					<input type="radio" ng-model="postItemStyle" value="Western"> Western   <br/>
+					<input type="radio" ng-model="postItemStyle" value="Japanese"> Japanese <br/>
+				</form>
+			</div>
+			<div>
+				<h1>seat temperature</h1>
+				<form>
+					<input type="radio" ng-model="postSeatTemperature" value="warm"> warm  <br/>
+					<input type="radio" ng-model="postSeatTemperature" value="cold"> cold  <br/>
+				</form>
+			</div>
+			<div>
+				<form>
+					<h1>comment here</h1>
+					<input type="text">
+				</form>
+			</div>
+		</div>
+		<div class="modal-hooter">
+			<button type="button" class="btn btn-primary" ng-click="postModalButton()">post</button>
+			<button type="button" class="btn btn-default" ng-click="closeModalWindow()">close</button>
+		</div>
 	</script>
 	
 		<div>
@@ -113,7 +112,7 @@
 
 <nav ng-show="showbtn" class="navbar navbar-inverse navbar-fixed-bottom">
     <div class="container-fluid">
-      <button type = "button" class="btn btn-info btn-lg" ng-click="post_confirmed">Post</button>
+      <button type = "button" class="btn btn-info btn-lg" ng-click="postFixed()">Post</button>
       <button type = "button" class="btn btn-info btn-lg" ng-click="showbtn=false" >cancel</button>
     </div>
   </nav> 

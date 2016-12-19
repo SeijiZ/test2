@@ -2,6 +2,7 @@ var app = angular.module('myApp', ['ui.bootstrap']);
 
 //intialize after loading ============================================
 app.run(function($rootScope, ngGeolocation,googleMapApi){
+//get current position and make map ==================================
 	ngGeolocation.getCurrentPosition()
 	.then(function(res){
 		var options = {
@@ -9,21 +10,28 @@ app.run(function($rootScope, ngGeolocation,googleMapApi){
 			center: new google.maps.LatLng(res.coords.latitude, res.coords.longitude)
 		}
 		$rootScope.map = new google.maps.Map(document.getElementById('map_canvas'), options);
-		console.log(res);
+
+//initialize geolocationApi's watchPosition ==========================
 		ngGeolocation.watchPosition({timeout: 60000, maximumAge: 0, enableHighAccuracy: true});
 		$rootScope.myPosition = ngGeolocation.position
-		console.log($rootScope.myPosition);
 		var count = 0;
 		var markers = [];
 		$rootScope.$watch('myPosition.coords', function(newValue, oldValue){
+
+//define watch position ==============================================
 			$rootScope.newPos = newValue;
 			$rootScope.oldPos = oldValue;
-			$rootScope.LatLng = new google.maps.LatLng($rootScope.newPos.latitude, $rootScope.newPos.longitude);
 			console.log($rootScope.newPos);
-			markers[count] = new google.maps.Marker({position: $rootScope.LatLng});
+
+//make marker ========================================================
+			markers[count] = new google.maps.Marker({
+				position: new google.maps.LatLng($rootScope.newPos.latitude, $rootScope.newPos.longitude)
+			});
 			markers[count].setMap($rootScope.map);
 			count = count +1;
 			console.log(count + "times");
+
+//remove previous marker =============================================
 			if(count > 1){
 				markers[count - 1].setMap(null);
 			}
@@ -74,7 +82,7 @@ app.controller('mainController', function(
 	googleMapApi) {
 
 
-//infowindow sample===========================================
+//infowindow sample===================================================
 		$scope.testa = function(){
 
 			function asyncMarker(lat,lng){
@@ -127,6 +135,13 @@ app.controller('mainController', function(
 			});
 		}
 
+		$scope.postFixed = function(){
+			console.log("function!");
+			$rootScope.$on("postModel", function(e,args){
+				console.log(args);
+				//connectionService.createItem("/post", data);
+			});
+		}
 	}
 );
 
@@ -139,57 +154,89 @@ app.controller('modalInsatnceCtrl', function(
 	connectionService,
 	googleMapApi){
 
-	$scope.cancel = function(){
+	$scope.closeModalWindow = function(){
 		$uibModalInstance.dismiss("cancel");
 	}
 
 //search button ======================================================
 	$scope.searchItems = function(){
+
+//define object ======================================================
 		var searchObj = {
 			range: $scope.searchRange,
 			style: $scope.searchItemStyle,
 			temperature: $scope.searchSeatTemperature
 		};
+//server communicatin and pull data ==================================
 		connectionService.getSearchedItems('/search', searchObj)
-			.then(function(res){
-				console.log(res);
-				//success
-				$rootScope.items = connectionService.items;
-				console.log($rootScope.items);
-				var markers = [];
-				var infoWindow = [];
-				for(var i = 0; i < $rootScope.items.length; i++){
-					console.log(i);
-					console.log($rootScope.items[i]);
-					markers[i] = googleMapApi.addMarker(
-						new google.maps.LatLng($rootScope.items[i].lat, $rootScope.items[i].lng),
-						$rootScope.map,
-						false
-					);
-					infoWindow[i] = new google.maps.InfoWindow({content: "<h1>" + $scope.items[i].style + "</h1>"});
-					google.maps.event.addListener(markers[i], 'click', function(){
-						console.log(i);
-						infoWindow[i].open($rootScope.map, markers[i]);
+			.then(function(items){
+				console.log(items);
+
+//define markers and add infowindow ==================================
+				$scope.markers = [];
+				var infoWindow = new google.maps.InfoWindow();
+
+//define create marker ===============================================
+				var createMarker = function(info){
+					var marker = new google.maps.Marker({
+						map: $rootScope.map,
+						position: new google.maps.LatLng(info.lat, info.lng)
 					});
+					marker.content = "<h1>" + info.style + "</h1>";
+
+//register litener event =============================================
+					google.maps.event.addListener(marker, "click",function(){
+						infoWindow.setContent(marker.content);
+						infoWindow.open($rootScope.map, marker);
+					});
+
+					$scope.markers.push(marker);
 				}
-					console.log($rootScope.items[0]);
-				$scope.cancel();
+
+//loop createMarker ==================================================
+				for(i = 0; i < items.length; i++){
+					createMarker(items[i]);
+				}
+				$scope.closeModalWindow();
 			})
 	}
 	
-	$scope.post_modal_button = function(){
+	$scope.postModalButton = function(){
+//show post footer ===================================================
 		$rootScope.showbtn = true;
-		$scope.cancel();
-		console.log($rootScope.newPos);
-		var latlng = new google.maps.LatLng($rootScope.newPos.latitude, $rootScope.newPos.longitude);
-		var marker = new google.maps.Marker({
-			position: latlng,
+
+//define icon to use =================================================
+		var icon = new google.maps.MarkerImage(
+			'images/new_icon.png',
+			new google.maps.Size(50,50)
+		);
+
+//define marker options ==============================================
+		var markerOptions = {
+			position: new google.maps.LatLng($rootScope.newPos.latitude, $rootScope.newPos.longitude),
 			map: $rootScope.map,
-			draggable: true});
+			icon: icon,
+			draggable: true
+		};
+
+//define marker ======================================================
+		var marker = new google.maps.Marker(markerOptions);
+
+		// register listener event ===================================
 		google.maps.event.addListener(marker, 'dragend', function(res){
-			console.log(res);
+
+//get dragged position ===============================================
+			$scope.confirmedLat = res.latLng.lat();
+			$scope.confirmedLng = res.latLng.lng();
+			console.log("Lat: " + $scope.confirmedLat + ", Lng: " + $scope.confirmedLng);
 		});
-		
+		console.log($scope.postSeatTemperature);
+//share model that is fixed ==========================================
+		var postModel = {
+			style: $scope.postItemStyle,
+			temperature: $scope.postSeatTemperature
+		};
+		$uibModalInstance.close(postModel);
 	}
 
 });

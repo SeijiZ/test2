@@ -25,10 +25,7 @@ app.factory('connectionService', function($http, $q){
 			url: url,
 			params:obj
 		})
-		.success(function(data, status, headers, config){
-			connect.items = data
-			defer.resolve(data);
-		})
+		.success(function(data, status, headers, config)})
 		.error(function(data, status, headers, config){
 			defer.reject(err);
 		})
