@@ -53,10 +53,11 @@ mainRouter.get("/search", function(req, res){
 });
 
 mainRouter.post('/post', function(req,res){
-	items.insertOne(req.body).then(function(){
-		res.send(req.body);
-	});
+//	items.insertOne(req.body).then(function(){
+//		res.send(req.body);
+//	});
 	console.log(req.body);
+	res.send("post succcess");
 });
 
 //admin routing ======================================================

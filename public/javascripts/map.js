@@ -82,42 +82,6 @@ app.controller('mainController', function(
 	googleMapApi) {
 
 
-//infowindow sample===================================================
-		$scope.testa = function(){
-
-			function asyncMarker(lat,lng){
-				var defer = $q.defer();
-				var marker = googleMapApi.addMarker(
-					new google.maps.LatLng(lat, lng),
-					$rootScope.map,
-					false);
-				console.log(marker);
-				defer.resolve(marker);
-				return defer.promise;
-			}
-			var promise = asyncMarker(36,140);
-			promise.then(function(res){
-				console.log(res);
-				google.maps.event.addListener(res, 'click', function(){
-					var infowindow = new google.maps.InfoWindow({content: "<h1>hello</h1>"});
-					infowindow.open($rootScope.map, res);
-				});
-			});
-
-//				var latlng = new google.maps.LatLng(36,140);
-//				var marker = new google.maps.Marker({
-//					position: latlng,
-//					map: $rootScope.map
-//				});
-//				var infowindow = new google.maps.InfoWindow();
-//				google.maps.event.addListener(marker, 'click', function(){
-//					$scope.msg = "hello world"
-//					infowindow.setContent("<h1>" + $scope.msg + "</h2>" );
-//					infowindow.open($rootScope.map, marker);
-//				})
-
-		};
-
 //initiate modal window ==============================================
 		$scope.openSearch = function(size){
 			var modalInstance = $uibModal.open({
@@ -127,20 +91,58 @@ app.controller('mainController', function(
 			});
 		}
 
+//open post modal window and get result ==============================
 		$scope.openPost = function(size){
 			var modalInstance = $uibModal.open({
 				size: size,
 				templateUrl: 'postModal.html' ,
 				controller: "modalInsatnceCtrl"
-			});
+			})
+//process after post modal button ====================================
+				.result.then(function(Obj){
+					$scope.postObj = Obj;
+
+//show post footer ===================================================
+					$rootScope.showbtn = true;
+
+//define icon to use =================================================
+					var icon = new google.maps.MarkerImage(
+						'images/new_icon.png',
+						new google.maps.Size(50,50)
+					);
+
+//define marker options ==============================================
+					var markerOptions = {
+						position: new google.maps.LatLng($rootScope.newPos.latitude, $rootScope.newPos.longitude),
+						map: $rootScope.map,
+						icon: icon,
+						draggable: true
+					};
+
+//define marker ======================================================
+					var marker = new google.maps.Marker(markerOptions);
+
+// register listener event ===================================
+					google.maps.event.addListener(marker, 'dragend', function(res){
+						$scope.confirmedLatLng = {lat: res.latLng.lat(), lng: res.latLng.lng()};
+					});
+				})
 		}
 
 		$scope.postFixed = function(){
-			console.log("function!");
-			$rootScope.$on("postModel", function(e,args){
-				console.log(args);
-				//connectionService.createItem("/post", data);
-			});
+			console.log($scope.postObj);
+			console.log("Lat: " + $scope.confirmedLatLng.lat + ", Lng: " + $scope.confirmedLatLng.lng);
+			var postData = {
+				lat: $scope.confirmedLatLng.lat,
+				lng: $scope.confirmedLatLng.lng,
+				style: $scope.postObj.style,
+				temperature: $scope.postObj.temperature,
+				comment: $scope.postObj.comment
+			};
+			connectionService.postItem("/post", postData)
+			.then(function(res){
+				console.log(res);
+			})
 		}
 	}
 );
@@ -202,39 +204,11 @@ app.controller('modalInsatnceCtrl', function(
 	}
 	
 	$scope.postModalButton = function(){
-//show post footer ===================================================
-		$rootScope.showbtn = true;
-
-//define icon to use =================================================
-		var icon = new google.maps.MarkerImage(
-			'images/new_icon.png',
-			new google.maps.Size(50,50)
-		);
-
-//define marker options ==============================================
-		var markerOptions = {
-			position: new google.maps.LatLng($rootScope.newPos.latitude, $rootScope.newPos.longitude),
-			map: $rootScope.map,
-			icon: icon,
-			draggable: true
-		};
-
-//define marker ======================================================
-		var marker = new google.maps.Marker(markerOptions);
-
-		// register listener event ===================================
-		google.maps.event.addListener(marker, 'dragend', function(res){
-
-//get dragged position ===============================================
-			$scope.confirmedLat = res.latLng.lat();
-			$scope.confirmedLng = res.latLng.lng();
-			console.log("Lat: " + $scope.confirmedLat + ", Lng: " + $scope.confirmedLng);
-		});
-		console.log($scope.postSeatTemperature);
 //share model that is fixed ==========================================
 		var postModel = {
 			style: $scope.postItemStyle,
-			temperature: $scope.postSeatTemperature
+			temperature: $scope.postSeatTemperature,
+			comment: $scope.postComment
 		};
 		$uibModalInstance.close(postModel);
 	}

@@ -30,12 +30,12 @@ app.factory('connectionService', function($http, $q){
 			defer.resolve(data);
 		})
 		.error(function(data, status, headers, config){
-			defer.reject(err);
+			defer.reject(status);
 		})
 		return defer.promise;
 	}
 
-	connect.createItem = function(url, data){
+	connect.postItem = function(url, data){
 		$http({
 			method: 'POST',
 			url: url,

@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html ng-app="myApp">
 <head>
-    <meta charset="UTF-8" />
-    <title>AngularJS</title>
+	<meta charset="UTF-8" />
+	<title>AngularJS</title>
 	<link rel="stylesheet" href="./bower_components/angular-bootstrap/ui-bootstrap-csp.css">
 	<link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="stylesheets/map.css" />
-
+	<link rel="stylesheet" href="stylesheets/map.css" />
 </head>
 <body ng-controller="mainController">
 	<h2>緯度：{{newPos.latitude}} 経度:{{newPos.longitude}}</h2>
@@ -91,7 +90,7 @@
 			<div>
 				<form>
 					<h1>comment here</h1>
-					<input type="text">
+					<input type="text" placeholder="comment here..." ng-model="postComment">
 				</form>
 			</div>
 		</div>
@@ -110,19 +109,19 @@
 			</span>
 		</div>
 
-<nav ng-show="showbtn" class="navbar navbar-inverse navbar-fixed-bottom">
-    <div class="container-fluid">
-      <button type = "button" class="btn btn-info btn-lg" ng-click="postFixed()">Post</button>
-      <button type = "button" class="btn btn-info btn-lg" ng-click="showbtn=false" >cancel</button>
-    </div>
-  </nav> 
+		<nav ng-show="showbtn" class="navbar navbar-inverse navbar-fixed-bottom">
+			<div class="container-fluid">
+				<button type = "button" class="btn btn-info btn-lg" ng-click="postFixed()">Post</button>
+				<button type = "button" class="btn btn-info btn-lg" ng-click="showbtn=false" >cancel</button>
+			</div>
+		</nav> 
 
     <!-- Google Map API キーが必要-->
 	<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQs-KCiEp2puGEGruZ-ozBWu1btLUwsq8"></script>
-    <script src="./bower_components/angular/angular.js"></script>
-    <script src="./bower_components/angular-bootstrap/ui-bootstrap.js"></script>
-    <script src="./bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="javascripts/map.js"></script>
-    <script src="javascripts/map_factory.js"></script>
+	<script src="./bower_components/angular/angular.js"></script>
+	<script src="./bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+	<script src="./bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+	<script src="javascripts/map.js"></script>
+	<script src="javascripts/map_factory.js"></script>
 </body>
 </html>
