@@ -1,6 +1,6 @@
 var adapp = angular.module('adminApp', []);
 
-adapp.controller('adCtrl', function($scope,$http){
+adapp.controller('adController', function($scope,$http){
 	//items box ==============================================
 	
 	$scope.items = [];
@@ -37,10 +37,12 @@ adapp.controller('adCtrl', function($scope,$http){
 			method: "POST",
 			url: '/admin/add',
 			data: {
-				name: $scope.newName,
 				lat: $scope.newLat,
 				lng: $scope.newLng,
-				style:$scope.newStyle
+				style:$scope.newStyle,
+				temperature:$scope.newTemperature,
+				comment:$scope.newComment,
+				rate: $scope.newRate
 			}
 		}).success(function(data, status, headers, config){
 			$scope.items.push(data);
@@ -48,11 +50,14 @@ adapp.controller('adCtrl', function($scope,$http){
 			console.log(data);
 			console.log($scope.items);
 			//refresh
-			$scope.newName  = "";
 			$scope.newLat   = "";
 			$scope.newLng   = "";
 			$scope.newStyle = "";
+			$scope.newTemperature = "";
+			$scope.newComment = "";
+			$scope.newRate = "";
 		}).error(function(data,status,headers,config){
+			console.log(data);
 			console.log(status);
 		})
 	}
@@ -63,15 +68,18 @@ adapp.controller('adCtrl', function($scope,$http){
 			url: 'admin/update',
 			data: {
 				_id: $scope.items[index]._id,
-				name: $scope.items[index].name,
 				lat: $scope.items[index].lat,
 				lng: $scope.items[index].lng,
-				style: $scope.items[index].style
+				style: $scope.items[index].style,
+				temperature: $scope.items[index].temperature,
+				comment: $scope.items[index].comment,
+				rate: $scope.items[index].rate
 			}
 		}).success(function(data, status, headers, config){
-			console.log(status);
 			console.log(data);
+			console.log(status);
 		}).error(function(data, status, headers, config){
+			console.log(data);
 			console.log(status);
 		})
 	}
@@ -87,16 +95,8 @@ adapp.controller('adCtrl', function($scope,$http){
 			console.log(data);
 			$scope.items.splice(index,1);
 		}).error(function(data, status, headers, config){
+			console.log(data);
 			console.log(status);
 		})
 	}
 });
-
-//adapp.config(function($httpProvider){
-//	$httpProvider.defaults.transformRequest = function(data){
-//		if(data === undefined){
-//			return data;
-//		}
-//		return $.param(data);
-//	}
-//});

@@ -29,7 +29,7 @@ app.run(function($rootScope, ngGeolocation,googleMapApi){
 			});
 			markers[count].setMap($rootScope.map);
 			count = count +1;
-			console.log(count + "times");
+			console.log("watchPosition called " + count + " times");
 
 //remove previous marker =============================================
 			if(count > 1){
@@ -82,57 +82,81 @@ app.controller('mainController', function(
 	googleMapApi) {
 
 
-//initiate modal window ==============================================
+		//open modal window ==============================================
 		$scope.openSearch = function(size){
 			var modalInstance = $uibModal.open({
 				size: size,
 				templateUrl: 'searchModal.html',
 				controller: "modalInsatnceCtrl"
-			});
+			})
+			//recieve searchObj and process ====================================
+				.result.then(function(Obj){
+					console.log(Obj);
+					//server communicatin and pull data ==================================
+					connectionService.getSearchedItems('/search', Obj)
+						.then(function(items){
+							console.log(items);
+							//define markers and add infowindow ==================================
+							$scope.markers = [];
+							var infoWindow = new google.maps.InfoWindow();
+							//define create marker ===============================================
+							var createMarker = function(info){
+								var marker = new google.maps.Marker({
+									map: $rootScope.map,
+									position: new google.maps.LatLng(info.lat, info.lng)
+								});
+								marker.content = "<h1>" + info.style + "</h1>";
+								//register litener event =============================================
+								google.maps.event.addListener(marker, "click",function(){
+									infoWindow.setContent(marker.content);
+									infoWindow.open($rootScope.map, marker);
+								});
+								$scope.markers.push(marker);
+							}
+							//loop createMarker ==================================================
+							for(i = 0; i < items.length; i++){
+								createMarker(items[i]);
+							}
+						})
+				})
 		}
 
-//open post modal window and get result ==============================
+		//open post modal window and get result ==============================
 		$scope.openPost = function(size){
 			var modalInstance = $uibModal.open({
 				size: size,
 				templateUrl: 'postModal.html' ,
 				controller: "modalInsatnceCtrl"
 			})
-//process after post modal button ====================================
+			//process after post modal button ====================================
 				.result.then(function(Obj){
 					$scope.postObj = Obj;
-
-//show post footer ===================================================
+					//show post footer ===================================================
 					$rootScope.showbtn = true;
-
-//define icon to use =================================================
+					//define icon to use =================================================
 					var icon = new google.maps.MarkerImage(
 						'images/new_icon.png',
 						new google.maps.Size(50,50)
 					);
-
-//define marker options ==============================================
+					//define marker options ==============================================
 					var markerOptions = {
 						position: new google.maps.LatLng($rootScope.newPos.latitude, $rootScope.newPos.longitude),
 						map: $rootScope.map,
 						icon: icon,
 						draggable: true
 					};
-
-//define marker ======================================================
+					//define marker ======================================================
 					var marker = new google.maps.Marker(markerOptions);
-
-//set initial value ==================================================
+					//set initial value ==================================================
 					$scope.confirmedLatLng = {lat: $rootScope.newPos.latitude,lng: $rootScope.newPos.longitude};
-
-//register listener event ============================================
+					//register listener event ============================================
 					google.maps.event.addListener(marker, 'dragend', function(res){
 						$scope.confirmedLatLng = {lat: res.latLng.lat(), lng: res.latLng.lng()};
 					});
 				})
 		}
 
-//fixed post button ==================================================
+		//fixed post button ==================================================
 		$scope.postFixed = function(){
 			console.log($scope.postObj);
 			console.log("Lat: " + $scope.confirmedLatLng.lat + ", Lng: " + $scope.confirmedLatLng.lng);
@@ -144,9 +168,11 @@ app.controller('mainController', function(
 				comment: $scope.postObj.comment
 			};
 			connectionService.postItem("/post", postData)
-			.then(function(res){
-				console.log(res);
-			})
+				.then(function(res){
+					console.log(res);
+				})
+			//hide post footer ===================================================
+			$rootScope.showbtn = false;
 		}
 	}
 );
@@ -160,11 +186,12 @@ app.controller('modalInsatnceCtrl', function(
 	connectionService,
 	googleMapApi){
 
+		//close modal window =================================================
 		$scope.closeModalWindow = function(){
 			$uibModalInstance.dismiss("cancel");
 		}
 
-//define  checkbox initial value =====================================
+		//define  checkbox initial value =====================================
 		$scope.searchValue = {
 			Style: {
 				Western: 0,
@@ -176,63 +203,31 @@ app.controller('modalInsatnceCtrl', function(
 			}
 		}
 
-//search button ======================================================
-	$scope.searchItems = function(){
+		//search button ======================================================
+		$scope.searchItems = function(){
+			//define object ======================================================
+			var searchObj = {
+				lat: $rootScope.newPos.latitude,
+				lng: $rootScope.newPos.longitude,
+				range: $scope.searchRange,
+				//define sum of checkbox value =======================================
+				style: $scope.searchValue.Style.Western + $scope.searchValue.Style.Japanese,
+				temperature: $scope.searchValue.Temperature.Warm + $scope.searchValue.Temperature.Cold
+			};
+			//pass to searchObj to mainController ==============================
+			$uibModalInstance.close(searchObj);
+		}
 
-//define object ======================================================
-		var searchObj = {
-			lat: $rootScope.newPos.latitude,
-			lng: $rootScope.newPos.longitude,
-			range: $scope.searchRange,
-//define sum of checkbox value =======================================
-			style: $scope.searchValue.Style.Western + $scope.searchValue.Style.Japanese,
-			temperature: $scope.searchValue.Temperature.Warm + $scope.searchValue.Temperature.Cold
-		};
-
-//server communicatin and pull data ==================================
-		connectionService.getSearchedItems('/search', searchObj)
-			.then(function(items){
-				console.log(items);
-
-//define markers and add infowindow ==================================
-				$scope.markers = [];
-				var infoWindow = new google.maps.InfoWindow();
-
-//define create marker ===============================================
-				var createMarker = function(info){
-					var marker = new google.maps.Marker({
-						map: $rootScope.map,
-						position: new google.maps.LatLng(info.lat, info.lng)
-					});
-					marker.content = "<h1>" + info.style + "</h1>"
-									 "<div>" + info.comment + "</div>";
-
-//register litener event =============================================
-					google.maps.event.addListener(marker, "click",function(){
-						infoWindow.setContent(marker.content);
-						infoWindow.open($rootScope.map, marker);
-					});
-
-					$scope.markers.push(marker);
-				}
-
-//loop createMarker ==================================================
-				for(i = 0; i < items.length; i++){
-					createMarker(items[i]);
-				}
-				$scope.closeModalWindow();
-			})
+		//post button ==========================================================
+		$scope.postModalButton = function(){
+			//pass data to mainCtrl ==============================================
+			var postObj = {
+				style: $scope.postItemStyle,
+				temperature: $scope.postSeatTemperature,
+				comment: $scope.postComment
+			};
+			//pass postObj to mainController ===================================
+			$uibModalInstance.close(postObj);
+		}
 	}
-	
-	$scope.postModalButton = function(){
-//pass data to mainCtrl ==============================================
-		var postModel = {
-			style: $scope.postItemStyle,
-			temperature: $scope.postSeatTemperature,
-			comment: $scope.postComment
-		};
-		$uibModalInstance.close(postModel);
-	}
-
-});
-
+);

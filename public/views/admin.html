@@ -6,34 +6,40 @@
 	<link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.css">
 	<link rel="stylesheet" href="stylesheets/admin.css">
 </head>
-<body  ng-controller="adCtrl">
+<body  ng-controller="adController">
 	<div>rows to display:
 		<input type="number" step="1" min="0" max="10" ng-model="rowLimit" >
 	</div>
 
 	<table class="table table-striped">
 		<thead>
-			<th ng-click="sortData('name')">Name<div ng-class="getSortClass('name')"></div></th>
 			<th ng-click="sortData('lat')">Lat<div ng-class="getSortClass('lat')"></div></th>
 			<th ng-click="sortData('lng')">Lng<div ng-class="getSortClass('lng')"></div></th>
 			<th ng-click="sortData('style')">Style<div ng-class="getSortClass('style')"></div></th>
+			<th ng-click="sortData('temperature')">Temperature<div ng-class="getSortClass('temperature')"></div></th>
+			<th ng-click="sortData('comment')">Comment<div ng-class="getSortClass('comment')"></div></th>
+			<th ng-click="sortData('rate')">Rate<div ng-class="getSortClass('rate')"></div></th>
 		</thead>
 		<tbody>
 			<tr ng-repeat="item in items |orderBy: sortColumn : reverseSort| limitTo: rowLimit">
-				<td><input type="text" ng-model="item.name"></td>
 				<td><input type="text" ng-model="item.lat"></td>
 				<td><input type="text" ng-model="item.lng"></td>
 				<td><input type="text" ng-model="item.style"></td>
+				<td><input type="text" ng-model="item.temperature"></td>
+				<td><input type="text" ng-model="item.comment"></td>
+				<td><input type="text" ng-model="item.rate"></td>
 				<td>
 					<button type="button" class="btn btn-warning" ng-click="update($index)">Update</button>
 					<button type="button" class="btn btn-danger" ng-click="delete($index)">Delete</button>
 				</td>
 			</tr>
 			<tr>
-				<td><input type="text" ng-model="newName"></td>
 				<td><input type="text" ng-model="newLat"></td>
 				<td><input type="text" ng-model="newLng"></td>
 				<td><input type="text" ng-model="newStyle"></td>
+				<td><input type="text" ng-model="newTemperature"></td>
+				<td><input type="text" ng-model="newComment"></td>
+				<td><input type="text" ng-model="newRate"></td>
 				<td><button type="button" class="btn btn-info" ng-click="add()" ng-disabled="!newName">Add</button></td>
 			</tr>
 		</tbody>

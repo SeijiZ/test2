@@ -39,96 +39,90 @@ app.use(logger('dev'));
 app.use('/', mainRouter);
 app.use('/admin', adminRouter);
 
-
 //index routing ======================================================
 mainRouter.get('/', function(req,res){
 	res.sendFile(path.join(__dirname+'/public/views/index.html'));
 });
 
-//mainRouter.get("/search", function(req, res){
-//	console.log(req.query);
-//	items.find().toArray(function(err, items){
-//		res.json(items);
-//	});
-//});
-
 mainRouter.get("/search", function(req, res){
-//return range =======================================================
+	//return range =======================================================
 	var rangeDicide = function(range){
 		switch(range){
-			case 1:
+			case '1':
 				var num = 2;
 				return num;
 				break;
-			case 2:
+			case '2':
 				var num = 4;
 				return num;
 				break;
-			case 3:
+			case '3':
 				var num = 6;
 				return num;
 				break;
 		}
 	}
 
-//return style =======================================================
+	//return style =======================================================
 	var styleDicide = function(style){
 		switch (style){
-			case 1:
-				console.log("Western Style");
+			case '1':
+				//				console.log("Western Style is selected");
 				return "Western";
 				break;
-			case 2:
-				console.log("Japanese Style");
+			case '2':
+				//				console.log("Japanese Style is selected");
 				return "Japanese";
 				break;
 			default:
-				console.log("Both Style");
+				//				console.log("Both Style is selected");
 				return {$in: ["Western", "Japanese"]};
 				break;
 		}
 	}
 
-//return temperature =================================================
+	//return temperature =================================================
 	var temperatureDecide = function(temperature){
 		switch (temperature){
 			case '1':
-				console.log("Warm Temperature");
+				//				console.log("Warm Temperature is selected");
 				return "Warm";
 				break;
 			case '2':
-				console.log("Cold Temperature");
+				//				console.log("Cold Temperature is selected");
 				return "Cold";
 				break;
 			default:
-				console.log("Both Temperature");
+				//				console.log("Both Temperature is selected");
 				return {$in: ["Warm", "Cold"]};
 				break;
 		}
 	}
-	console.log(isNaN(req.query.lat - parseInt(rangeDicide(req.query.range))));
-	console.log(req.query.lat - 5);
-	console.log(isNaN(req.query.lat));
-	console.log(isNaN(rangeDicide(req.query.range)));
 
 	console.log(req.query);
+	var diffValue = rangeDicide(req.query.range);
 	items.find({
-		lat: {$gt: req.query.lat - rangeDicide(req.query.range), $ls: req.query.lat + rangeDicide(req.query.range)},
-		lng: {$gt: req.query.lng - rangeDicide(req.query.range), $ls: req.query.lng + rangeDicide(req.query.range)},
+		lat: {$gte: req.query.lat - diffValue, $lte: Number(req.query.lat) + Number(diffValue)},
+		lng: {$gte: req.query.lng - diffValue, $lte: Number(req.query.lng) + Number(diffValue)},
 		style: styleDicide(req.query.style),
 		temperature: temperatureDecide(req.query.temperature)
 	}).toArray(function(err, items){
-		res.json(items);
+		if(err){
+			console.log(err);
+			res.send(err);
+		}else{
+			console.log(items);
+			res.json(items);
+		}
 	});
 });
 
 mainRouter.post('/post', function(req,res){
-//	items.insertOne(req.body).then(function(){
-//		res.send(req.body);
-//	});
 	req.body.rate = 3;
 	console.log(req.body);
-	res.send("post succcess");
+	items.insertOne(req.body).then(function(){
+		res.send("Post Successed!!");
+	});
 });
 
 //admin routing ======================================================
@@ -154,10 +148,12 @@ adminRouter.put('/update', function(req,res){
 	items.updateOne(
 		{_id: new ObjectID(req.body._id)},
 		{$set: {
-			name:  req.body.name,
 			lat:   req.body.lat,
 			lng:   req.body.lng,
-			style: req.body.style
+			style: req.body.style,
+			test: req.body.temperature,
+			comment: req.body.comment,
+			rate: req.body.rate
 		}},
 		{upsert:true},
 		function(err,r){
