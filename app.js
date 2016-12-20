@@ -45,9 +45,79 @@ mainRouter.get('/', function(req,res){
 	res.sendFile(path.join(__dirname+'/public/views/index.html'));
 });
 
+//mainRouter.get("/search", function(req, res){
+//	console.log(req.query);
+//	items.find().toArray(function(err, items){
+//		res.json(items);
+//	});
+//});
+
 mainRouter.get("/search", function(req, res){
+//return range =======================================================
+	var rangeDicide = function(range){
+		switch(range){
+			case 1:
+				var num = 2;
+				return num;
+				break;
+			case 2:
+				var num = 4;
+				return num;
+				break;
+			case 3:
+				var num = 6;
+				return num;
+				break;
+		}
+	}
+
+//return style =======================================================
+	var styleDicide = function(style){
+		switch (style){
+			case 1:
+				console.log("Western Style");
+				return "Western";
+				break;
+			case 2:
+				console.log("Japanese Style");
+				return "Japanese";
+				break;
+			default:
+				console.log("Both Style");
+				return {$in: ["Western", "Japanese"]};
+				break;
+		}
+	}
+
+//return temperature =================================================
+	var temperatureDecide = function(temperature){
+		switch (temperature){
+			case '1':
+				console.log("Warm Temperature");
+				return "Warm";
+				break;
+			case '2':
+				console.log("Cold Temperature");
+				return "Cold";
+				break;
+			default:
+				console.log("Both Temperature");
+				return {$in: ["Warm", "Cold"]};
+				break;
+		}
+	}
+	console.log(isNaN(req.query.lat - parseInt(rangeDicide(req.query.range))));
+	console.log(req.query.lat - 5);
+	console.log(isNaN(req.query.lat));
+	console.log(isNaN(rangeDicide(req.query.range)));
+
 	console.log(req.query);
-	items.find().toArray(function(err, items){
+	items.find({
+		lat: {$gt: req.query.lat - rangeDicide(req.query.range), $ls: req.query.lat + rangeDicide(req.query.range)},
+		lng: {$gt: req.query.lng - rangeDicide(req.query.range), $ls: req.query.lng + rangeDicide(req.query.range)},
+		style: styleDicide(req.query.style),
+		temperature: temperatureDecide(req.query.temperature)
+	}).toArray(function(err, items){
 		res.json(items);
 	});
 });
@@ -56,6 +126,7 @@ mainRouter.post('/post', function(req,res){
 //	items.insertOne(req.body).then(function(){
 //		res.send(req.body);
 //	});
+	req.body.rate = 3;
 	console.log(req.body);
 	res.send("post succcess");
 });
@@ -116,3 +187,19 @@ https.createServer(options, app).listen(8888);
 
 console.log('server runnning at http://localhost:3000');
 console.log('server runnning at https://localhost:8888');
+
+
+//test data ==========================================================
+//db.sampleColl.insert(
+//	{lat: 30, lng: 135, style:"Japanese", temperature:"Warm", comment: "test1", rate:3},
+//	{lat: 31, lng: 136, style:"Japanese", temperature:"Warm", comment: "test2", rate:3},
+//	{lat: 32, lng: 137, style:"Japanese", temperature:"Warm", comment: "test3", rate:3},
+//	{lat: 33, lng: 138, style:"Japanese", temperature:"Cold", comment: "test4", rate:3},
+//	{lat: 34, lng: 139, style:"Japanese", temperature:"Cold", comment: "test5", rate:3},
+//	{lat: 35, lng: 140, style: "Western", temperature:"Warm", comment: "test6", rate:3},
+//	{lat: 36, lng: 141, style: "Western", temperature:"Warm", comment: "test7", rate:3},
+//	{lat: 37, lng: 142, style: "Western", temperature:"Warm", comment: "test8", rate:3},
+//	{lat: 38, lng: 143, style: "Western", temperature:"Cold", comment: "test9", rate:3},
+//	{lat: 39, lng: 144, style: "Western", temperature:"Cold", comment:"test10", rate:3},
+//	{lat: 40, lng: 145, style: "Western", temperature:"Cold", comment:"test11", rate:3}
+//);

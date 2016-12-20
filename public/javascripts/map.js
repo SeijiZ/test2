@@ -122,13 +122,17 @@ app.controller('mainController', function(
 //define marker ======================================================
 					var marker = new google.maps.Marker(markerOptions);
 
-// register listener event ===================================
+//set initial value ==================================================
+					$scope.confirmedLatLng = {lat: $rootScope.newPos.latitude,lng: $rootScope.newPos.longitude};
+
+//register listener event ============================================
 					google.maps.event.addListener(marker, 'dragend', function(res){
 						$scope.confirmedLatLng = {lat: res.latLng.lat(), lng: res.latLng.lng()};
 					});
 				})
 		}
 
+//fixed post button ==================================================
 		$scope.postFixed = function(){
 			console.log($scope.postObj);
 			console.log("Lat: " + $scope.confirmedLatLng.lat + ", Lng: " + $scope.confirmedLatLng.lng);
@@ -156,19 +160,35 @@ app.controller('modalInsatnceCtrl', function(
 	connectionService,
 	googleMapApi){
 
-	$scope.closeModalWindow = function(){
-		$uibModalInstance.dismiss("cancel");
-	}
+		$scope.closeModalWindow = function(){
+			$uibModalInstance.dismiss("cancel");
+		}
+
+//define  checkbox initial value =====================================
+		$scope.searchValue = {
+			Style: {
+				Western: 0,
+				Japanese: 0
+			},
+			Temperature: {
+				Warm: 0,
+				Cold: 0
+			}
+		}
 
 //search button ======================================================
 	$scope.searchItems = function(){
 
 //define object ======================================================
 		var searchObj = {
+			lat: $rootScope.newPos.latitude,
+			lng: $rootScope.newPos.longitude,
 			range: $scope.searchRange,
-			style: $scope.searchItemStyle,
-			temperature: $scope.searchSeatTemperature
+//define sum of checkbox value =======================================
+			style: $scope.searchValue.Style.Western + $scope.searchValue.Style.Japanese,
+			temperature: $scope.searchValue.Temperature.Warm + $scope.searchValue.Temperature.Cold
 		};
+
 //server communicatin and pull data ==================================
 		connectionService.getSearchedItems('/search', searchObj)
 			.then(function(items){
@@ -184,7 +204,8 @@ app.controller('modalInsatnceCtrl', function(
 						map: $rootScope.map,
 						position: new google.maps.LatLng(info.lat, info.lng)
 					});
-					marker.content = "<h1>" + info.style + "</h1>";
+					marker.content = "<h1>" + info.style + "</h1>"
+									 "<div>" + info.comment + "</div>";
 
 //register litener event =============================================
 					google.maps.event.addListener(marker, "click",function(){
@@ -204,7 +225,7 @@ app.controller('modalInsatnceCtrl', function(
 	}
 	
 	$scope.postModalButton = function(){
-//share model that is fixed ==========================================
+//pass data to mainCtrl ==============================================
 		var postModel = {
 			style: $scope.postItemStyle,
 			temperature: $scope.postSeatTemperature,

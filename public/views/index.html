@@ -38,23 +38,23 @@
 			<div>
 				<h1>Search range</h1>
 				<form>
-					<input type="radio" ng-model="searchRange" value="small"> small  <br/>
-					<input type="radio" ng-model="searchRange" value="mediam"> mediam <br/>
-					<input type="radio" ng-model="searchRange" value="large"> large  <br/>
+					<input type="radio" ng-model="searchRange" value=1> small  <br/>
+					<input type="radio" ng-model="searchRange" value=2> mediam <br/>
+					<input type="radio" ng-model="searchRange" value=3> large  <br/>
 				</form>
 			</div>
 			<div>
 				<h1>toilet style</h1>
 				<form>
-					<input type="radio" ng-model="searchItemStyle" value="Western"> Western   <br/>
-					<input type="radio" ng-model="searchItemStyle" value="Japanese"> Japanese <br/>
+					<input type="checkbox" ng-model="searchValue.Style.Western" ng-true-value="1" ng-false-value="0"> Western   <br/>
+					<input type="checkbox" ng-model="searchValue.Style.Japanese" ng-true-value="2" ng-false-value="0"> Japanese <br/>
 				</form>
 			</div>
 			<div>
 				<h1>seat temperature</h1>
 				<form>
-					<input type="radio" ng-model="searchSeatTemperature" value="warm"> warm  <br/>
-					<input type="radio" ng-model="searchSeatTemperature" value="cold"> cold  <br/>
+					<input type="checkbox" ng-model="searchValue.Temperature.Warm" ng-true-value="1" ng-false-value="0"> Warm  <br/>
+					<input type="checkbox" ng-model="searchValue.Temperature.Cold" ng-true-value="2" ng-false-value="0"> Cold  <br/>
 				</form>
 			</div>
 		</div>
