@@ -222,8 +222,8 @@ app.controller('modalInsatnceCtrl', function(
 		$scope.postModalButton = function(){
 			//pass data to mainCtrl ==============================================
 			var postObj = {
-				style: $scope.postItemStyle,
-				temperature: $scope.postSeatTemperature,
+				style: $scope.postValue.Style,
+				temperature: $scope.postValue.Temperature,
 				comment: $scope.postComment
 			};
 			//pass postObj to mainController ===================================

@@ -2,66 +2,51 @@
 <html ng-app="myApp">
 <head>
 	<meta charset="UTF-8" />
-	<title>AngularJS</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1"> <!--携帯で見ても同じ画面っぽくなる呪文-->
+	<title>Maptoilet</title>
 	<link rel="stylesheet" href="./bower_components/angular-bootstrap/ui-bootstrap-csp.css">
 	<link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.css">
 	<link rel="stylesheet" href="stylesheets/map.css" />
 </head>
 <body ng-controller="mainController">
-	<h2>緯度：{{newPos.latitude}} 経度:{{newPos.longitude}}</h2>
+	<h1 class="title" style="background-image: url(images/coolToilet2.png);">MapToilet
+		<small><br>Find out the toilet you really like</small>
+	</h1>
 	<div id="map_canvas"></div>
-	<!--test1-->
-	<!--
-	<div class="container">
-		<button class="btn btn-primary" ng-click="testa()">test</button>
-		<br>
-		<input type="button" ng-click="confirmBtn()">
-		<br>
-		<br>
-		<table class="table">
-			<tr ng-repeat="result in results">
-				<td>{{result.name}}</td>
-				<td>{{result.lat}}</td>
-				<td>{{result.lng}}</td>
-			</tr>
-		</table>
-	</div>
-	-->
-	<!--test2-->
 
 	<!-- search modal window -->
 	<script type="text/ng-template" id="searchModal.html">
 		<div class="modal-header">
-			<h1>Search</h1>
+			<h1><u>Search toilets</u></h1>
 		</div>
 		<div class="modal-body">
 			<div>
 				<h1>Search range</h1>
-				<form>
-					<input type="radio" ng-model="searchRange" value=1> small  <br/>
-					<input type="radio" ng-model="searchRange" value=2> mediam <br/>
-					<input type="radio" ng-model="searchRange" value=3> large  <br/>
+				<form id="btn">
+					<input id="small" type="radio" ng-model="searchRange" value=1> Small  <br/>
+					<input id="medium"type="radio" ng-model="searchRange" value=2> Medium <br/>
+					<input id="large" type="radio" ng-model="searchRange" value=3> Large  <br/>
 				</form>
 			</div>
 			<div>
 				<h1>toilet style</h1>
-				<form>
-					<input type="checkbox" ng-model="searchValue.Style.Western" ng-true-value="1" ng-false-value="0"> Western   <br/>
-					<input type="checkbox" ng-model="searchValue.Style.Japanese" ng-true-value="2" ng-false-value="0"> Japanese <br/>
+				<form id="btn">
+					<input id="western"  type="checkbox" ng-model="searchValue.Style.Western" ng-true-value="1" ng-false-value="0"> Western   <br/>
+					<input id="japanese" type="checkbox" ng-model="searchValue.Style.Japanese" ng-true-value="2" ng-false-value="0"> Japanese <br/>
 				</form>
 			</div>
 			<div>
 				<h1>seat temperature</h1>
-				<form>
-					<input type="checkbox" ng-model="searchValue.Temperature.Warm" ng-true-value="1" ng-false-value="0"> Warm  <br/>
-					<input type="checkbox" ng-model="searchValue.Temperature.Cold" ng-true-value="2" ng-false-value="0"> Cold  <br/>
+				<form id="btn">
+					<input id="warm" type="checkbox" ng-model="searchValue.Temperature.Warm" ng-true-value="1" ng-false-value="0"> Warm  <br/>
+					<input id="cold" type="checkbox" ng-model="searchValue.Temperature.Cold" ng-true-value="2" ng-false-value="0"> Cold  <br/>
 				</form>
 			</div>
 		</div>
 		<div class="modal-hooter">
-			<span style="align: center;">
-				<button type="button" class="btn btn-primary" ng-click="searchItems()">Search</button>
-				<button type="button" class="btn btn-default" ng-click="closeModalWindow()">close</button>
+			<span style="text-align: center">
+        <button id="closeBtn" type="button" class="btn btn-default" ng-click="closeModalWindow()">Close</button>
+        <button id="searchBtn" type="button" class="btn btn-primary" ng-click="searchItems()">Search</button>
 			</span>
 		</div>
 	</script>
@@ -70,21 +55,21 @@
 	<!-- post modal window -->
 	<script type="text/ng-template" id="postModal.html">
 		<div class="modal-header">
-			<h1>modal window</h1>
+			<h1><u>Post toilets</u></h1>
 		</div>
 		<div class="modal-body">
 			<div>
-				<h1>toilet style</h1>
+				<h1>Toilet style</h1>
 				<form>
-					<input type="radio" ng-model="postItemStyle" value="Western"> Western   <br/>
-					<input type="radio" ng-model="postItemStyle" value="Japanese"> Japanese <br/>
+					<input type="radio" ng-model="postValue.Style" value="Western"> Western   <br/>
+					<input type="radio" ng-model="postValue.Style" value="Japanese"> Japanese <br/>
 				</form>
 			</div>
 			<div>
-				<h1>seat temperature</h1>
+				<h1>Seat temperature</h1>
 				<form>
-					<input type="radio" ng-model="postSeatTemperature" value="Warm"> warm  <br/>
-					<input type="radio" ng-model="postSeatTemperature" value="Cold"> cold  <br/>
+					<input type="radio" ng-model="postValue.Temperature" value="Warm"> warm  <br/>
+					<input type="radio" ng-model="postValue.Temperature" value="Cold"> cold  <br/>
 				</form>
 			</div>
 			<div>
@@ -95,17 +80,18 @@
 			</div>
 		</div>
 		<div class="modal-hooter">
-			<button type="button" class="btn btn-primary" ng-click="postModalButton()">post</button>
-			<button type="button" class="btn btn-default" ng-click="closeModalWindow()">close</button>
+			<button id="closeBtn" type="button" class="btn btn-default" ng-click="closeModalWindow()">Close</button>
+			<button id="postBtn"  type="button" class="btn btn-primary" ng-click="postModalButton()" >Post</button>
 		</div>
 	</script>
-	
-		<div>
+
+	<!-- bottom icon button -->
+		<nav class="navbar navbar-default navbar-fixed-bottom">
 			<span class="icon_container">
-			<img ng-click="openSearch()" src="images/icon_search.png" class=".icon_button"  alt="icon_search">
+			<img ng-click="openSearch()" src="images/icon_search.png" class=".icon_button"  alt="icon_search" style="width:20%">
 			</span>
 			<span class="icon_container">
-			<img ng-click="openPost()" src="images/icon_plus.png" class=".icon_button" alt="icon_plus">
+			<img ng-click="openPost()" src="images/icon_plus.png" class=".icon_button" alt="icon_plus" style="width:20%">
 			</span>
 		</div>
 
@@ -116,7 +102,6 @@
 			</div>
 		</nav> 
 
-    <!-- Google Map API キーが必要-->
 	<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQs-KCiEp2puGEGruZ-ozBWu1btLUwsq8"></script>
 	<script src="./bower_components/angular/angular.js"></script>
 	<script src="./bower_components/angular-bootstrap/ui-bootstrap.js"></script>

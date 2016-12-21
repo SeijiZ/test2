@@ -148,12 +148,12 @@ adminRouter.put('/update', function(req,res){
 	items.updateOne(
 		{_id: new ObjectID(req.body._id)},
 		{$set: {
-			lat:   req.body.lat,
-			lng:   req.body.lng,
-			style: req.body.style,
-			test: req.body.temperature,
-			comment: req.body.comment,
-			rate: req.body.rate
+			lat:         req.body.lat,
+			lng:         req.body.lng,
+			style:       req.body.style,
+			temperature: req.body.temperature,
+			comment:     req.body.comment,
+			rate:        req.body.rate
 		}},
 		{upsert:true},
 		function(err,r){

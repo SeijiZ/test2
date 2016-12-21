@@ -7,7 +7,7 @@ adapp.controller('adController', function($scope,$http){
 
 	//order and rowLimit ==============================================
 	$scope.rowLimit = 10;
-	$scope.sortColumn = "name"
+	$scope.sortColumn = "_id"
 	$scope.reverseSort = false;
 	$scope.sortData = function(column){
 		$scope.reverseSort = ($scope.sortColumn == column) ? !$scope.reverseSort : false;
@@ -24,13 +24,15 @@ adapp.controller('adController', function($scope,$http){
 	$http({
 		method: "GET",
 		url: 'admin/read'
-	}).success(function(data, status, headers, config){
-		$scope.items = data;
-		console.log(status);
-		console.log(data);
-	}).error(function(data, status, headers, config){
-		console.log(status);
-	})
+	}).then(function(res){
+		//sccess callback =======================================
+		$scope.items = res.data;
+		console.log(res);
+	},function(err){
+		//error callback =====================================
+		console.log(err);
+	});
+
 	//add item ===================================================
 	$scope.add = function(){
 		$http({
@@ -44,10 +46,10 @@ adapp.controller('adController', function($scope,$http){
 				comment:$scope.newComment,
 				rate: $scope.newRate
 			}
-		}).success(function(data, status, headers, config){
-			$scope.items.push(data);
-
-			console.log(data);
+		}).then(function(res){
+			//success callback ===========================
+			$scope.items.push(res.data);
+			console.log(res);
 			console.log($scope.items);
 			//refresh
 			$scope.newLat   = "";
@@ -56,11 +58,12 @@ adapp.controller('adController', function($scope,$http){
 			$scope.newTemperature = "";
 			$scope.newComment = "";
 			$scope.newRate = "";
-		}).error(function(data,status,headers,config){
-			console.log(data);
-			console.log(status);
-		})
+		},function(err){
+			//error callback ============================
+			console.log(err);
+		});
 	}
+
 	//update item ============================================
 	$scope.update = function(index){
 		$http({
@@ -75,14 +78,15 @@ adapp.controller('adController', function($scope,$http){
 				comment: $scope.items[index].comment,
 				rate: $scope.items[index].rate
 			}
-		}).success(function(data, status, headers, config){
-			console.log(data);
-			console.log(status);
-		}).error(function(data, status, headers, config){
-			console.log(data);
-			console.log(status);
-		})
+		}).then(function(res){
+			//success callback =============
+			console.log(res);
+		},function(err){
+			//error callback ==========
+			console.log(err);
+		});
 	}
+
 	//delete item ==============================================
 	$scope.delete = function(index){
 		console.log($scope.items[index]._id);
@@ -90,13 +94,14 @@ adapp.controller('adController', function($scope,$http){
 			method: 'DELETE',
 			url: '/admin/delete/',
 			params: {_id: $scope.items[index]._id}
-		}).success(function(data, status, headers, config){
-			console.log(status);
-			console.log(data);
+		}).then(function(res){
+			//success callback =============
+			console.log(res);
 			$scope.items.splice(index,1);
-		}).error(function(data, status, headers, config){
-			console.log(data);
-			console.log(status);
-		})
+		},function(err){
+			//error callback ==========
+			console.log(err);
+		});
 	}
+
 });

@@ -8,14 +8,14 @@ app.factory('connectionService', function($http, $q){
 		$http({
 			method: 'GET',
 			url: url
-		})
-		.success(function(data, status, headers, config){
-			connect.items = data
-			defer.resolve(data);
-		})
-		.error(function(data, status, headers, config){
+		}).then(function(res){
+			//success callback ========
+			connect.items = res.data;
+			defer.resolve(res.data);
+		}, function(err){
+			//error callback ===========
 			defer.reject(err);
-		})
+		});
 		return defer.promise;
 	}
 
@@ -24,14 +24,14 @@ app.factory('connectionService', function($http, $q){
 			method: 'GET',
 			url: url,
 			params:obj
-		})
-		.success(function(data, status, headers, config){
-			connect.items = data
-			defer.resolve(data);
-		})
-		.error(function(data, status, headers, config){
-			defer.reject(status);
-		})
+		}).then(function(res){
+			//success callback ========
+			connect.items = res.data;
+			defer.resolve(res.data);
+		}, function(err){
+			//error callback ===========
+			defer.reject(err);
+		});
 		return defer.promise;
 	}
 
@@ -40,15 +40,16 @@ app.factory('connectionService', function($http, $q){
 			method: 'POST',
 			url: url,
 			data: data
-		})
-		.success(function(data, status, headers, config){
-			defer.resolve(data);
-		})
-		.error(function(data, status, headers, config){
+		}).then(function(res){
+			//success callback ========
+			defer.resolve(res.data);
+		}, function(err){
+			//error callback ===========
 			defer.reject(err);
-		})
+		});
 		return defer.promise;
 	}
+
 	return connect;
 });
 
