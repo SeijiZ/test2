@@ -95,7 +95,7 @@ app.controller('mainController', function(
 					//server communicatin and pull data ==================================
 					connectionService.getSearchedItems('/search', Obj)
 						.then(function(items){
-							console.log(items);
+							console.log(items[0].lat);
 							//define markers and add infowindow ==================================
 							$scope.markers = [];
 							var infoWindow = new google.maps.InfoWindow();
@@ -103,9 +103,11 @@ app.controller('mainController', function(
 							var createMarker = function(info){
 								var marker = new google.maps.Marker({
 									map: $rootScope.map,
-									position: new google.maps.LatLng(info.lat, info.lng)
+									position: new google.maps.LatLng(info.lat, info.lng),
+									animation: google.maps.Animation.DROP
 								});
-								marker.content = "<h1>" + info.style + "</h1>";
+								marker.content = "<span> Style: " + info.style + "</span>"+
+									"<span> Comment :" + info.comment + "</span>";
 								//register litener event =============================================
 								google.maps.event.addListener(marker, "click",function(){
 									infoWindow.setContent(marker.content);

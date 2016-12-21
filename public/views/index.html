@@ -23,9 +23,9 @@
 			<div>
 				<h1>Search range</h1>
 				<form id="btn">
-					<input id="small" type="radio" ng-model="searchRange" value=1> Small  <br/>
-					<input id="medium"type="radio" ng-model="searchRange" value=2> Medium <br/>
-					<input id="large" type="radio" ng-model="searchRange" value=3> Large  <br/>
+					<input type="radio" ng-model="searchRange" value=1> Small  <br/>
+					<input type="radio" ng-model="searchRange" value=2> Medium <br/>
+					<input type="radio" ng-model="searchRange" value=3> Large  <br/>
 				</form>
 			</div>
 			<div>
@@ -46,7 +46,7 @@
 		<div class="modal-hooter">
 			<span style="text-align: center">
         <button id="closeBtn" type="button" class="btn btn-default" ng-click="closeModalWindow()">Close</button>
-        <button id="searchBtn" type="button" class="btn btn-primary" ng-click="searchItems()">Search</button>
+        <button id="searchBtn" type="button" class="btn btn-primary" ng-click="searchItems()" ng-disabled="!searchRange">Search</button>
 			</span>
 		</div>
 	</script>
@@ -77,11 +77,12 @@
 					<h1>comment here</h1>
 					<input type="text" placeholder="comment here..." ng-model="postComment">
 				</form>
+				<span>{{150 - postComment.length}}</span>
 			</div>
 		</div>
 		<div class="modal-hooter">
 			<button id="closeBtn" type="button" class="btn btn-default" ng-click="closeModalWindow()">Close</button>
-			<button id="postBtn"  type="button" class="btn btn-primary" ng-click="postModalButton()" >Post</button>
+			<button id="postBtn"  type="button" class="btn btn-primary" ng-click="postModalButton()" ng-disabled="!postValue.Style||!postValue.Temperature||!postComment">Post</button>
 		</div>
 	</script>
 

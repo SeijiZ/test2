@@ -89,11 +89,11 @@ adapp.controller('adController', function($scope,$http){
 
 	//delete item ==============================================
 	$scope.delete = function(index){
-		console.log($scope.items[index]._id);
+		console.log($scope.items[index].lat);
 		$http({
 			method: 'DELETE',
 			url: '/admin/delete/',
-			params: {_id: $scope.items[index]._id}
+			params: {lat: $scope.items[index].lat}
 		}).then(function(res){
 			//success callback =============
 			console.log(res);
